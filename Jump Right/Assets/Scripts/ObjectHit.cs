@@ -5,10 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class ObjectHit : MonoBehaviour
 {
+  
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Bumped into me !!!");
-        SceneManager.LoadScene("SampleScene");
-        //GetComponent<MeshRenderer>().material.color = Color.red;
+        if(collision.gameObject.name == "Player")
+        {
+            Destroy(GameObject.Find("Cube"));
+            GetComponent<MeshRenderer>().material.color = Color.red;
+        }
+        //SceneManager.LoadScene("SampleScene");
+        
     }
 }
