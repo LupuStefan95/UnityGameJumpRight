@@ -7,9 +7,10 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody rb;
-    private PlayerInput playerInput;
+    //private PlayerInput playerInput;
     private PlayerInputActions playerInputActions;
     private bool isGrounded = true;
+    public SpawnManager spawnManager;
 
 
 
@@ -32,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 inputVector = playerInputActions.Movements.Move.ReadValue<Vector2>();
-        float topSpeed = 6f;
+        float topSpeed = 7f;
         if (rb.velocity.magnitude < topSpeed)
         {
             rb.AddForce(500f * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y));
@@ -63,13 +64,17 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed && isGrounded && (rb.transform.position.y > 2.48f))
         {
                 Debug.Log(context);
-                rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+                rb.AddForce(Vector3.up * 6f, ForceMode.Impulse);
         }
        
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        spawnManager.SpawnTriggerEntered();
+    }
 
 
-   
+
 
 
 }
