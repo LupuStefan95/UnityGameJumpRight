@@ -9,16 +9,18 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private PlayerInput playerInput;
     private PlayerInputActions playerInputActions;
+    private bool isGrounded = true;
 
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        //playerInput = GetComponent<PlayerInput>(); Can be binded a specific metod in the Player Input inspector.
+        //playerInput = GetComponent<PlayerInput>(); Can be binded a specific method in the Player Input inspector.
         playerInputActions = new PlayerInputActions();
         playerInputActions.Movements.Enable();
-        playerInputActions.Movements.Jump.performed += Jump;        
+        playerInputActions.Movements.Jump.performed += Jump;
+        
     }
 
 
@@ -30,22 +32,43 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 inputVector = playerInputActions.Movements.Move.ReadValue<Vector2>();
-        float speed = 15f;
-        rb.AddForce(new Vector3(inputVector.x, 0, inputVector.y) * speed , ForceMode.Force);
+        float topSpeed = 6f;
+        if (rb.velocity.magnitude < topSpeed)
+        {
+            rb.AddForce(500f * Time.deltaTime * new Vector3(inputVector.x, 0, inputVector.y));
+        }
 
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (transform.position.y < 3f)
+       
+        if (context.performed && isGrounded && (rb.transform.position.y > 2.48f))
         {
-            if (context.performed)
-            {
                 Debug.Log(context);
                 rb.AddForce(Vector3.up * 5f, ForceMode.Impulse);
-            }
         }
+       
     }
+
+
    
 
 
